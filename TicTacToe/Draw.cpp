@@ -32,9 +32,9 @@ void Draw::GameUI()
 	std::cout << "               |     |" << std::endl;
 	std::cout << "               |     |" << std::endl;
 	std::cout << "               |     |" << std::endl;
-	std::cout << "          -----+-----+-----" << std::endl;
+	std::cout << "          -----+-----+-----     [Arrow Keys] to pick your move" << std::endl;
 	std::cout << "               |     |" << std::endl;
-	std::cout << "               |     |" << std::endl;
+	std::cout << "               |     |          [Enter] to confirm your move!" << std::endl;
 	std::cout << "               |     |" << std::endl;
 	std::cout << "          -----+-----+-----" << std::endl;
 	std::cout << "               |     |" << std::endl;

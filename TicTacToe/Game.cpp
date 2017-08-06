@@ -112,12 +112,12 @@ void Game::GameTwoPlayers()
 	while (currentGameState == GAME_NOT_OVER)
 	{
 		//Write text for whos turn
-		Draw::GoToXY(7, 3);
+		Draw::GoToXY(8, 3);
 
 		if (whosTurn == 0)
-			std::cout << "[Noughts turn to play!]";
+			std::cout << "Noughts turn to play!";
 		else
-			std::cout << "[Crosses turn to play!]";
+			std::cout << "Crosses turn to play!";
 
 		
 		int playersChoice = GetPlayerChoice();
@@ -138,23 +138,23 @@ void Game::GameTwoPlayers()
 	//Reach here: Game ended, announce winner
 
 	Draw::CurrentBoardState(_gameBoard);
-	Draw::GoToXY(6, 3);
+	Draw::GoToXY(7, 3);
 	Draw::ChangeDrawColour(COLOUR_YELLOW_ON_BLACK);
 	switch (currentGameState)
 	{
 	case (NOUGHT_WIN):
 	{
-		std::cout << "[GAME OVER: Noughts Wins!]   ";
+		std::cout << "GAME OVER: Noughts Wins!   ";
 		break;
 	}
 	case (CROSS_WIN):
 	{
-		std::cout << "[GAME OVER: Crosses Wins!]   ";
+		std::cout << "GAME OVER: Crosses Wins!   ";
 		break;
 	}
 	case (DRAW):
 	{
-		std::cout << "[GAME OVER: It's a draw!]   ";
+		std::cout << "GAME OVER: It's a draw!   ";
 		break;
 	}
 	default:
