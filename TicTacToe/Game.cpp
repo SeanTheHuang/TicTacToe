@@ -6,17 +6,45 @@
 
 Game::Game()
 {
-	srand((size_t)time(NULL));
-
-	for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-	{
-		_gameBoard[i] = EMPTY;
-	}
+	srand((size_t)time(NULL));	//Randomize numbers	
 }
 
 void Game::StartGame()
 {
-	MainMenuState();
+	_nextState = PROG_MENU;
+	ProgramStateMachine();
+}
+
+void Game::ProgramStateMachine()
+{
+	while (_nextState != PROG_EXIT)
+	{
+		switch (_nextState)
+		{
+		case (PROG_MENU):
+		{
+			MainMenuState();
+			break;
+		}
+		case (PROG_VS_PLAYER):
+		{
+			GameTwoPlayers();
+			break;
+		}
+		case (PROG_VS_COMPUTER_NORMAL):
+		{
+			GameVsNormalBot();
+			break;
+		}
+		case (PROG_VS_COMPUTER_HARD):
+		{
+			GameVsHardBot();
+			break;
+		}
+		default:
+			break;
+		}
+	}
 }
 
 void Game::MainMenuState()
@@ -40,24 +68,25 @@ void Game::MainMenuState()
 		{
 		case ('1'):	//VS PLAYER
 		{
-			GameTwoPlayers();
+			_nextState = PROG_VS_PLAYER;
 			validUserInput = true;
 			break;
 		}
 		case ('2'):	//VS NORMAL COMPUTER
 		{
-			GameVsNormalBot();
+			_nextState = PROG_VS_COMPUTER_NORMAL;
 			validUserInput = true;
 			break;
 		}
 		case ('3'):	//VS HARD COMPUTER
 		{
-			GameVsHardBot();
+			_nextState = PROG_VS_COMPUTER_HARD;
 			validUserInput = true;
 			break;
 		}
 		case ('0'):	//Quit Game
 		{
+			_nextState = PROG_EXIT;
 			validUserInput = true;
 			break;
 		}
@@ -72,8 +101,9 @@ void Game::MainMenuState()
 void Game::GameTwoPlayers()
 {
 	Draw::GameUI();
+	ClearBoard();
 
-	GAME_OVER_STATES currentGameState = GAME_NOT_OVER;
+	GAMEOVER_STATE currentGameState = GAME_NOT_OVER;
 
 	//0 = Noughts turn
 	//1 = Crosses turn
@@ -90,19 +120,82 @@ void Game::GameTwoPlayers()
 			std::cout << "[Crosses turn to play!]";
 
 		
-		int playersChoice = getPlayerChoice();
+		int playersChoice = GetPlayerChoice();
 
 		if (whosTurn == 0)	//Nought placement
 			_gameBoard[playersChoice] = NOUGHT;
 		else				//Cross placement
 			_gameBoard[playersChoice] = CROSS;
 
+		//Check current game state
+		currentGameState = CheckGameOver3x3();
+
 		//Next person's turn
-		whosTurn = (whosTurn+1) % 2;
+		if (currentGameState == GAME_NOT_OVER)
+			whosTurn = (whosTurn+1) % 2;
 	}
 
-	int hang;
-	std::cin >> hang;
+	//Reach here: Game ended, announce winner
+
+	Draw::CurrentBoardState(_gameBoard);
+	Draw::GoToXY(6, 3);
+
+	switch (currentGameState)
+	{
+	case (NOUGHT_WIN):
+	{
+		std::cout << "[GAME OVER: Noughts Wins!]   ";
+		break;
+	}
+	case (CROSS_WIN):
+	{
+		std::cout << "[GAME OVER: Crosses Wins!]   ";
+		break;
+	}
+	case (DRAW):
+	{
+		std::cout << "[GAME OVER: It's a draw!]   ";
+		break;
+	}
+	default:
+		break;
+	}
+
+	//Player choose what to do next
+	Draw::GoToXY(0, 17);
+	std::cout << "   Choose:" << std::endl;
+	std::cout << "   --------------------" << std::endl;
+	std::cout << "   1) Play again" << std::endl;
+	std::cout << "   2) Back to main menu" << std::endl;
+
+	bool validInput = false;
+	while (!validInput)
+	{
+		int userInput = _getch();
+
+		//Special key inputted, get special key
+		if (userInput == 0 || userInput == 0xE0)
+		{
+			userInput = _getch();
+		}
+
+		switch ((char)userInput)
+		{
+		case ('1'):
+		{
+			validInput = true;
+			break;
+		}
+		case ('2'):
+		{
+			_nextState = PROG_MENU;
+			validInput = true;
+			break;
+		}
+		default:
+			break;
+		}
+	}
 }
 
 void Game::GameVsNormalBot()
@@ -115,7 +208,7 @@ void Game::GameVsHardBot()
 	Draw::GameUI();
 }
 
-GAME_OVER_STATES Game::checkGameOver3x3()
+GAMEOVER_STATE Game::CheckGameOver3x3()
 {
 	bool boardIsFull = true;
 
@@ -123,10 +216,10 @@ GAME_OVER_STATES Game::checkGameOver3x3()
 	for (size_t i = 0; i < 3; i++)
 	{
 		//Horizontal win
-		if (_gameBoard[i] != EMPTY && _gameBoard[i] == _gameBoard[i + 1]
-			&& _gameBoard[i] == _gameBoard[i + 2])
+		if (_gameBoard[(i*3)] != EMPTY && _gameBoard[(i * 3)] == _gameBoard[(i * 3) + 1]
+			&& _gameBoard[(i * 3)] == _gameBoard[(i * 3) + 2])
 		{
-			return (_gameBoard[i] == NOUGHT) ? NOUGHT_WIN : CROSS_WIN;
+			return (_gameBoard[i*3] == NOUGHT) ? NOUGHT_WIN : CROSS_WIN;
 		}
 		//Vertical Win
 		else if (_gameBoard[i] != EMPTY && _gameBoard[i] == _gameBoard[i + 3]
@@ -136,7 +229,7 @@ GAME_OVER_STATES Game::checkGameOver3x3()
 		}
 
 		//If empty slot found in row, board is not empty
-		if (_gameBoard[i] == EMPTY || _gameBoard[i + 1] == EMPTY || _gameBoard[i + 2] == EMPTY)
+		if (_gameBoard[i] == EMPTY || _gameBoard[i + 3] == EMPTY || _gameBoard[i + 6] == EMPTY)
 		{
 			boardIsFull = false;
 		}
@@ -161,7 +254,7 @@ GAME_OVER_STATES Game::checkGameOver3x3()
 	return DRAW;
 }
 
-int Game::getPlayerChoice()
+int Game::GetPlayerChoice()
 {
 	int currentSelectedIndex = 0;
 
@@ -171,7 +264,7 @@ int Game::getPlayerChoice()
 	{
 		//Highlight currently selected
 		Draw::CurrentBoardState(_gameBoard);
-		Draw::HighlightTile(currentSelectedIndex % BOARD_SIZE, 
+		Draw::HighlightTile(currentSelectedIndex % BOARD_SIZE,
 			(int)currentSelectedIndex / BOARD_SIZE, _gameBoard[currentSelectedIndex]);
 
 		//Check for inputs
@@ -244,8 +337,17 @@ int Game::getPlayerChoice()
 
 		else if (currentSelectedIndex >= totalTiles)
 			currentSelectedIndex -= totalTiles;
+
 	}
 
 	return currentSelectedIndex;
+}
+
+void Game::ClearBoard()
+{
+	for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+	{
+		_gameBoard[i] = EMPTY;
+	}
 }
 

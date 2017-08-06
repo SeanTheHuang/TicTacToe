@@ -19,7 +19,17 @@ enum TILE_STATE
 	CROSS
 };
 
-enum GAME_OVER_STATES
+enum PROGRAM_STATE
+{
+	PROG_NONE = -1,
+	PROG_MENU,
+	PROG_VS_PLAYER,
+	PROG_VS_COMPUTER_NORMAL,
+	PROG_VS_COMPUTER_HARD,
+	PROG_EXIT
+};
+
+enum GAMEOVER_STATE
 {
 	GAME_NOT_OVER = -1,
 	NOUGHT_WIN,
@@ -39,13 +49,17 @@ public:
 
 private:
 	TILE_STATE _gameBoard[BOARD_SIZE*BOARD_SIZE];
+	PROGRAM_STATE _nextState;
+
+	void ProgramStateMachine();
 
 	void MainMenuState();
 	void GameTwoPlayers();
 	void GameVsNormalBot();
 	void GameVsHardBot();
 
-	GAME_OVER_STATES checkGameOver3x3();
-	int getPlayerChoice();
+	GAMEOVER_STATE CheckGameOver3x3();
+	int GetPlayerChoice();
+	void ClearBoard();
 
 };
