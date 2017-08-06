@@ -132,6 +132,11 @@ void Draw::ChangeDrawColour(TEXT_COLOUR newColour)
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_INTENSITY | BACKGROUND_INTENSITY);
 		break;
 	}
+	case (COLOUR_YELLOW_ON_BLACK):
+	{
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN);
+		break;
+	}
 	default:
 		break;
 	}

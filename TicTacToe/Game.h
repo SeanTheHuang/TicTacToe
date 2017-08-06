@@ -61,5 +61,6 @@ private:
 	GAMEOVER_STATE CheckGameOver3x3();
 	int GetPlayerChoice();
 	void ClearBoard();
+	void PostGameUI();
 
 };

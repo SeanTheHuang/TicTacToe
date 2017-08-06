@@ -139,7 +139,7 @@ void Game::GameTwoPlayers()
 
 	Draw::CurrentBoardState(_gameBoard);
 	Draw::GoToXY(6, 3);
-
+	Draw::ChangeDrawColour(COLOUR_YELLOW_ON_BLACK);
 	switch (currentGameState)
 	{
 	case (NOUGHT_WIN):
@@ -161,41 +161,9 @@ void Game::GameTwoPlayers()
 		break;
 	}
 
-	//Player choose what to do next
-	Draw::GoToXY(0, 17);
-	std::cout << "   Choose:" << std::endl;
-	std::cout << "   --------------------" << std::endl;
-	std::cout << "   1) Play again" << std::endl;
-	std::cout << "   2) Back to main menu" << std::endl;
+	Draw::ChangeDrawColour(COLOUR_WHITE_ON_BLACK);
 
-	bool validInput = false;
-	while (!validInput)
-	{
-		int userInput = _getch();
-
-		//Special key inputted, get special key
-		if (userInput == 0 || userInput == 0xE0)
-		{
-			userInput = _getch();
-		}
-
-		switch ((char)userInput)
-		{
-		case ('1'):
-		{
-			validInput = true;
-			break;
-		}
-		case ('2'):
-		{
-			_nextState = PROG_MENU;
-			validInput = true;
-			break;
-		}
-		default:
-			break;
-		}
-	}
+	PostGameUI();
 }
 
 void Game::GameVsNormalBot()
@@ -348,6 +316,45 @@ void Game::ClearBoard()
 	for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
 	{
 		_gameBoard[i] = EMPTY;
+	}
+}
+
+void Game::PostGameUI()
+{
+	//Player choose what to do next
+	Draw::GoToXY(0, 17);
+	std::cout << "   Choose:" << std::endl;
+	std::cout << "   --------------------" << std::endl;
+	std::cout << "   1) Play again" << std::endl;
+	std::cout << "   2) Back to main menu" << std::endl;
+
+	bool validInput = false;
+	while (!validInput)
+	{
+		int userInput = _getch();
+
+		//Special key inputted, get special key
+		if (userInput == 0 || userInput == 0xE0)
+		{
+			userInput = _getch();
+		}
+
+		switch ((char)userInput)
+		{
+		case ('1'):
+		{
+			validInput = true;
+			break;
+		}
+		case ('2'):
+		{
+			_nextState = PROG_MENU;
+			validInput = true;
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 

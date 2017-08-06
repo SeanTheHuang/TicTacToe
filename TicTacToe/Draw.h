@@ -13,6 +13,7 @@ enum TEXT_COLOUR
 	COLOUR_WHITE_ON_BLACK, 
 	COLOUR_RED_ON_BLACK, 
 	COLOUR_GREEN_ON_BLACK, 
+	COLOUR_YELLOW_ON_BLACK,
 	COLOUR_BLACK_ON_GREY, 
 };
 
@@ -26,6 +27,7 @@ public:
 	static void CurrentBoardState(enum TILE_STATE[]);
 	static void HighlightTile(int, int, TILE_STATE);
 
+	static void ChangeDrawColour(TEXT_COLOUR);
 	static void GoToXY(int, int);
 
 	
@@ -33,7 +35,6 @@ private:
 	static void ClearAll();
 	static void ClearAllButTitle();
 
-	static void ChangeDrawColour(TEXT_COLOUR);
 
 	static void DrawCross(int, int);
 	static void DrawNought(int, int);
