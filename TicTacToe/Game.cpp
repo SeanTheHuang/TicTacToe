@@ -169,6 +169,66 @@ void Game::GameTwoPlayers()
 void Game::GameVsNormalBot()
 {
 	Draw::GameUI();
+	ClearBoard();
+
+	//PLAYER = NOUGHTS
+	//COMPUTER = CROSSES
+	
+	int whosTurn = rand() % 2;
+	//whosTurn = 0 <= Noughts turn
+	//whosTurn = 1 <= Crosses turn
+
+	GAMEOVER_STATE currentGameState = GAME_NOT_OVER;
+
+	while (currentGameState == GAME_NOT_OVER)
+	{
+		Draw::CurrentBoardState(_gameBoard);
+
+		if (whosTurn == 0)	//Players turn
+		{
+			_gameBoard[GetPlayerChoice()] = NOUGHT;
+		}
+		else//Computers turn
+		{
+			_gameBoard[GetComputerMoveRandom()] = CROSS;
+		}
+
+		//Check for win condition
+		currentGameState = CheckGameOver3x3();
+
+		//Switch turns
+		whosTurn = (whosTurn+1) % 2;
+	}
+
+	//Reach here: End game condition met
+
+	Draw::CurrentBoardState(_gameBoard);
+	Draw::ChangeDrawColour(COLOUR_YELLOW_ON_BLACK);
+	Draw::GoToXY(7, 3);
+
+	switch (currentGameState)
+	{
+	case (NOUGHT_WIN):	//Player won
+	{
+		std::cout << "Nice! You bet the computer!!";
+		break;
+	}
+	case (CROSS_WIN):	//Computer won
+	{
+		std::cout << "Computer wins. Better luck next time!";
+		break;
+	}
+	case (DRAW):		//No winnner
+	{
+		std::cout << "Wow! It's a draw!";
+		break;
+	}
+	default:
+		break;
+	}
+	Draw::ChangeDrawColour(COLOUR_WHITE_ON_BLACK);
+
+	PostGameUI();
 }
 
 void Game::GameVsHardBot()
@@ -210,7 +270,7 @@ GAMEOVER_STATE Game::CheckGameOver3x3()
 		return (_gameBoard[0] == NOUGHT) ? NOUGHT_WIN : CROSS_WIN;
 	}
 	else if (_gameBoard[2] != EMPTY && _gameBoard[2] == _gameBoard[4]
-		&& _gameBoard[0] == _gameBoard[6])
+		&& _gameBoard[2] == _gameBoard[6])
 	{
 		return (_gameBoard[2] == NOUGHT) ? NOUGHT_WIN : CROSS_WIN;
 	}
@@ -309,6 +369,40 @@ int Game::GetPlayerChoice()
 	}
 
 	return currentSelectedIndex;
+}
+
+int Game::GetComputerMoveRandom()
+{
+	int newMove = 0;
+	int randRange = BOARD_SIZE * BOARD_SIZE;
+
+	//Sanity check: There is a possible move, else return -1
+	bool boardIsFull = true;
+	for (size_t i = 0; i < randRange; i++)
+	{
+		if (_gameBoard[i] == EMPTY)
+			boardIsFull = false;
+	}
+
+	if (boardIsFull)
+	{
+		return -1;
+	}
+		
+
+	//Begin randomizing next move
+
+	while (true)
+	{
+		newMove = rand() % randRange;
+
+		if (_gameBoard[newMove] == EMPTY)
+		{
+			break;
+		}
+	}
+
+	return newMove;
 }
 
 void Game::ClearBoard()

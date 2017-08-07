@@ -80,7 +80,7 @@ void Draw::ClearAll()
 
 	for (size_t i = 0; i < 25; i++)
 	{
-		std::cout << "                                                                                                                        " << std::endl;
+		std::cout << "                                                                                                                                                " << std::endl;
 	}
 
 	GoToXY(0, 0);
@@ -92,7 +92,7 @@ void Draw::ClearAllButTitle()
 
 	for (size_t i = 0; i < 22; i++)
 	{
-		std::cout << "                                                                                                                        " << std::endl; 
+		std::cout << "                                                                                                                                                           " << std::endl; 
 	}
 
 	GoToXY(0, 3);

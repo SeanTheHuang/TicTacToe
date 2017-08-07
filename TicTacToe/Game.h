@@ -60,6 +60,7 @@ private:
 
 	GAMEOVER_STATE CheckGameOver3x3();
 	int GetPlayerChoice();
+	int GetComputerMoveRandom();
 	void ClearBoard();
 	void PostGameUI();
 
