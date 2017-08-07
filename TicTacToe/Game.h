@@ -71,6 +71,6 @@ private:
 	void ClearBoard();
 	void PostGameUI();
 
-	int MiniMaxAlgorithm(int alpha, int beta, int& score, bool goingForMax);
+	int MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax, int& chosenTile);
 
 };

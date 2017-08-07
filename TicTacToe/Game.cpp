@@ -171,6 +171,9 @@ void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 	Draw::GameUI();
 	ClearBoard();
 
+	Draw::GoToXY(7, 3);
+	std::cout << "You = O   Computer = X";
+
 	//PLAYER = NOUGHTS
 	//COMPUTER = CROSSES
 	
@@ -213,7 +216,7 @@ void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 	{
 	case (NOUGHT_WIN):	//Player won
 	{
-		std::cout << "Nice! You bet the computer!!";
+		std::cout << "Nice! You bet the computer!!         ";
 		break;
 	}
 	case (CROSS_WIN):	//Computer won
@@ -223,7 +226,7 @@ void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 	}
 	case (DRAW):		//No winnner
 	{
-		std::cout << "Wow! It's a draw!";
+		std::cout << "Wow! It's a draw!                ";
 		break;
 	}
 	default:
@@ -406,7 +409,7 @@ int Game::GetComputerMoveRandom()
 int Game::GetComputerMoveSmart()
 {
 	int output;
-	MiniMaxAlgorithm(-1000, 1000, output, true);
+	MiniMaxAlgorithm(-1000, 1000, 0, true, output);
 
 	return output;
 }
@@ -458,85 +461,15 @@ void Game::PostGameUI()
 	}
 }
 
-int Game::MiniMaxAlgorithm(int alpha, int beta, int& chosenTile, bool goingForMax)
+int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax, int& chosenTile)
 {
-	//Try placing on each tile
-	for (size_t i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-	{
-		if (_gameBoard[i] == EMPTY)
-		{
-			_gameBoard[i] == CROSS;
-			GAMEOVER_STATE state = CheckGameOver3x3();	//Check outcome of move
+	//Check end game states
 
-			switch (state)
-			{
-			case (NOUGHT_WIN):	//Computer lose state
-			{
-				if (goingForMax && -10 > alpha)
-				{
-					alpha = -10;
+	//Loop through each tile and call recursively
+	//Update chosen tile whenever depth = 0
+	//Update alpha beta constantly
+	//Prune when alpha >= beta
 
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				else if (!goingForMax && 10 < beta)
-				{
-					beta = 10;
-
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				break;
-			}
-			case (CROSS_WIN):	//Computer win state
-			{
-				if (goingForMax && 10 > alpha)
-				{
-					alpha = 10;
-
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				else if (!goingForMax && -10 < beta)
-				{
-					beta = -10;
-
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				break;
-			}
-			case (DRAW):
-			{
-				if (goingForMax && 0 > alpha)
-				{
-					alpha = 0;
-
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				else if (!goingForMax && 0 < beta)
-				{
-					beta = 0;
-
-					if (alpha >= beta)	//Prune when possible
-						i = BOARD_SIZE*BOARD_SIZE;
-				}
-				break;
-			}
-			case (GAME_NOT_OVER):
-			{
-				break;
-			}
-			default:
-				break;
-			}
-
-			_gameBoard[i] == EMPTY; //Get rid of old move, try another move (if any)
-		}
-	}
-
-	//Only reach here when trying to place tile + board is full
 	return -1;
 }
 
