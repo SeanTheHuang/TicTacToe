@@ -33,12 +33,12 @@ void Game::ProgramStateMachine()
 		}
 		case (PROG_VS_COMPUTER_NORMAL):
 		{
-			GameVsNormalBot();
+			GameVsComputer(COMP_NORMAL);
 			break;
 		}
 		case (PROG_VS_COMPUTER_HARD):
 		{
-			GameVsHardBot();
+			GameVsComputer(COMP_HARD);
 			break;
 		}
 		default:
@@ -166,7 +166,7 @@ void Game::GameTwoPlayers()
 	PostGameUI();
 }
 
-void Game::GameVsNormalBot()
+void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 {
 	Draw::GameUI();
 	ClearBoard();
@@ -188,9 +188,12 @@ void Game::GameVsNormalBot()
 		{
 			_gameBoard[GetPlayerChoice()] = NOUGHT;
 		}
-		else//Computers turn
+		else	//Computers turn
 		{
-			_gameBoard[GetComputerMoveRandom()] = CROSS;
+			if (difficulty == COMP_NORMAL)
+				_gameBoard[GetComputerMoveRandom()] = CROSS;
+			else
+				_gameBoard[GetComputerMoveSmart()] = CROSS;
 		}
 
 		//Check for win condition
@@ -229,11 +232,6 @@ void Game::GameVsNormalBot()
 	Draw::ChangeDrawColour(COLOUR_WHITE_ON_BLACK);
 
 	PostGameUI();
-}
-
-void Game::GameVsHardBot()
-{
-	Draw::GameUI();
 }
 
 GAMEOVER_STATE Game::CheckGameOver3x3()
@@ -405,6 +403,14 @@ int Game::GetComputerMoveRandom()
 	return newMove;
 }
 
+int Game::GetComputerMoveSmart()
+{
+	int output;
+	MiniMaxAlgorithm(-1000, 1000, output, true);
+
+	return output;
+}
+
 void Game::ClearBoard()
 {
 	for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
@@ -450,5 +456,87 @@ void Game::PostGameUI()
 			break;
 		}
 	}
+}
+
+int Game::MiniMaxAlgorithm(int alpha, int beta, int& chosenTile, bool goingForMax)
+{
+	//Try placing on each tile
+	for (size_t i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+	{
+		if (_gameBoard[i] == EMPTY)
+		{
+			_gameBoard[i] == CROSS;
+			GAMEOVER_STATE state = CheckGameOver3x3();	//Check outcome of move
+
+			switch (state)
+			{
+			case (NOUGHT_WIN):	//Computer lose state
+			{
+				if (goingForMax && -10 > alpha)
+				{
+					alpha = -10;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				else if (!goingForMax && 10 < beta)
+				{
+					beta = 10;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				break;
+			}
+			case (CROSS_WIN):	//Computer win state
+			{
+				if (goingForMax && 10 > alpha)
+				{
+					alpha = 10;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				else if (!goingForMax && -10 < beta)
+				{
+					beta = -10;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				break;
+			}
+			case (DRAW):
+			{
+				if (goingForMax && 0 > alpha)
+				{
+					alpha = 0;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				else if (!goingForMax && 0 < beta)
+				{
+					beta = 0;
+
+					if (alpha >= beta)	//Prune when possible
+						i = BOARD_SIZE*BOARD_SIZE;
+				}
+				break;
+			}
+			case (GAME_NOT_OVER):
+			{
+				break;
+			}
+			default:
+				break;
+			}
+
+			_gameBoard[i] == EMPTY; //Get rid of old move, try another move (if any)
+		}
+	}
+
+	//Only reach here when trying to place tile + board is full
+	return -1;
 }
 

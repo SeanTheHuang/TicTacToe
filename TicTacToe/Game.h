@@ -37,6 +37,13 @@ enum GAMEOVER_STATE
 	DRAW
 };
 
+enum COMPUPTER_LEVEL
+{
+	NO_LEVEL = -1,
+	COMP_NORMAL,
+	COMP_HARD
+};
+
 class Game
 {
 
@@ -55,13 +62,15 @@ private:
 
 	void MainMenuState();
 	void GameTwoPlayers();
-	void GameVsNormalBot();
-	void GameVsHardBot();
+	void GameVsComputer(COMPUPTER_LEVEL);
 
 	GAMEOVER_STATE CheckGameOver3x3();
 	int GetPlayerChoice();
 	int GetComputerMoveRandom();
+	int GetComputerMoveSmart();
 	void ClearBoard();
 	void PostGameUI();
+
+	int MiniMaxAlgorithm(int alpha, int beta, int& score, bool goingForMax);
 
 };
