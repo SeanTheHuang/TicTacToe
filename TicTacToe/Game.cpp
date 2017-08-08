@@ -1,3 +1,17 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2005 - 2017 Media Design School
+//
+// File Name : Game.cpp
+// Description : Implementation of Game class functions
+// Author : Sean Huang
+// Mail : sean.hua7281@mediadesig.school.nz
+//
+
 #include "Game.h"
 #include "Draw.h"
 #include <conio.h>
@@ -9,11 +23,23 @@ Game::Game()
 	srand((size_t)time(NULL));	//Randomize numbers	according to current time
 }
 
+// Function: StartGame
+// Inputs: none
+// Output: none
+// Task: Start point of the game.
+//		 External calls may only use this function to start the game
+
 void Game::StartGame()
 {
 	_nextState = PROG_MENU;
 	ProgramStateMachine();
 }
+
+// Function: ProgramStateMachine
+// Inputs: none
+// Output: none
+// Task: Function is used to jump between states of the game
+//		 _nextState class variable is used to determine next state to go to
 
 void Game::ProgramStateMachine()
 {
@@ -46,6 +72,16 @@ void Game::ProgramStateMachine()
 		}
 	}
 }
+
+// Function: MainMenuState
+// Inputs: none
+// Output: none
+// Task: Menu for player to choose what mode they would like to play
+//		 Choices:	Player vs Player
+//					Player vs Computer (Normal or Hard)
+//					Quit Game
+//
+//		Choices are made using keyboard inputs
 
 void Game::MainMenuState()
 {
@@ -97,6 +133,12 @@ void Game::MainMenuState()
 	}
 
 }
+
+// Function: GameTwoPlayers
+// Inputs: none
+// Output: none
+// Task: Player vs player game.
+//		 Runs a simulation of tic tac toe
 
 void Game::GameTwoPlayers()
 {
@@ -166,6 +208,11 @@ void Game::GameTwoPlayers()
 	PostGameUI();
 }
 
+// Function: GameVsComputer
+// Inputs: difficulty - AI level of the computer player
+// Output: none
+// Task: Player vs computer game of tic tac toe.
+//		 
 void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 {
 	Draw::GameUI();
@@ -237,6 +284,12 @@ void Game::GameVsComputer(COMPUPTER_LEVEL difficulty)
 	PostGameUI();
 }
 
+// Function: CheckGameOver3x3
+// Inputs: none
+// Output: GAMEOVER_STATE = State of the game current board (i.e. if a player has won)
+// Task: Checks the _gameBoard class array to see if a winner is found
+//		 Function also checks if the game ends in a draw
+
 GAMEOVER_STATE Game::CheckGameOver3x3()
 {
 	bool boardIsFull = true;
@@ -282,6 +335,14 @@ GAMEOVER_STATE Game::CheckGameOver3x3()
 	//Reach here: Board is full and no winner
 	return DRAW;
 }
+
+// Function: GetsPlayerChoice
+// Inputs: none
+// Output: int - index of tile which player has confirmed to play
+// Task: Gets which tile the player wants to play on
+//		 Function uses keyboard inputs to move around board and
+//		 The enter key to confirm their choice.
+//		 Only empty tiles are accepted as possible choices
 
 int Game::GetPlayerChoice()
 {
@@ -372,6 +433,11 @@ int Game::GetPlayerChoice()
 	return currentSelectedIndex;
 }
 
+// Function: GetComputerMoveRandom
+// Inputs: none
+// Output: int - index of tile which computer is playing
+// Task: Randomly pick a free tile to play on
+
 int Game::GetComputerMoveRandom()
 {
 	int newMove = 0;
@@ -406,10 +472,20 @@ int Game::GetComputerMoveRandom()
 	return newMove;
 }
 
+// Function: GetComputerMoveSmart
+// Inputs: none
+// Output: int - index of tile computer is playing on in a smart way.
+// Task: Start point of the minimax algorithm to figure out where to play next.
+
 int Game::GetComputerMoveSmart()
 {
 	return MiniMaxAlgorithm(-1000, 1000, 0, true);
 }
+
+// Function: ClearBoard
+// Inputs: none
+// Output: none
+// Task: Set all values in _gameBoard array to empty (clear the board)
 
 void Game::ClearBoard()
 {
@@ -418,6 +494,12 @@ void Game::ClearBoard()
 		_gameBoard[i] = EMPTY;
 	}
 }
+
+// Function: PostGameUI
+// Inputs: none
+// Output: none
+// Task: Call after a game ends. Asks user if they want to play again
+//		 or quit back to main menu. Uses keyboard input to get user option
 
 void Game::PostGameUI()
 {
@@ -458,6 +540,14 @@ void Game::PostGameUI()
 	}
 }
 
+// Function: MiniMaxAlgorithm
+// Inputs: alpha & beta - Used for alphabeta pruning
+//		   depth - Used to figure out when to return the best move
+//		   goingForMax - Used to figure out if we want to maximise or minimise outcome.
+//
+// Output: int - Returns best move if depth = 0 else, returns alpha/beta value used for alphabeta pruning
+// Task: Uses Minimax algorithm with alphabeta pruning to find best move to play.
+
 int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 {
 	//Check end game states
@@ -484,6 +574,8 @@ int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 		break;
 	}
 
+	//Reach here: Game is not over
+
 	//Variable for best move
 	int bestMove = -1;
 
@@ -492,14 +584,14 @@ int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 	{
 		if (_gameBoard[i] == EMPTY)
 		{
-			if (goingForMax)	//Going for min score
+			if (goingForMax)	//Going for max score
 			{
 				_gameBoard[i] = CROSS;
 				int temp = MiniMaxAlgorithm(alpha, beta, depth+1, !goingForMax);
 
 				if (temp > alpha)
 				{
-					bestMove = i;
+					bestMove = i;	//Remember current best move for computer
 					alpha = temp;
 
 					if (alpha >= beta)
@@ -517,7 +609,7 @@ int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 				_gameBoard[i] = EMPTY;
 				 
 			}
-			else				//Going for max score
+			else				//Going for min score
 			{
 				_gameBoard[i] = NOUGHT;
 				int temp = MiniMaxAlgorithm(alpha, beta, depth + 1, !goingForMax);
@@ -539,7 +631,7 @@ int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 		}
 	}
 
-	//No pruning occured
+	//Reach here: No pruning occured
 	if (goingForMax)
 	{
 		if (depth == 0)

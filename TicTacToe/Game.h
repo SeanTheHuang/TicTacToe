@@ -1,17 +1,32 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2005 - 2017 Media Design School
+//
+// File Name : Game.h
+// Description : Plays a simulation of Tic-Tac-Toe
+//				 User can play vs: Other players, & normal/hard AI
+// Author : Sean Huang
+// Mail : sean.hua7281@mediadesig.school.nz
+//
+
 #pragma once
 
 #include "Draw.h"
 
-#define BOARD_SIZE 3
+#define BOARD_SIZE 3	//Width & Height of the board
 
-//Key Codes
+//Key Codes - Used to process keyboard input
 const int KEY_DOWN = 80;
 const int KEY_UP = 72;
 const int KEY_LEFT = 75;
 const int KEY_RIGHT = 77;
 const int KEY_ENTER = 13;
 
-enum TILE_STATE
+enum TILE_STATE	//State of a tile on the board
 {
 	NO_STATE = -1,
 	EMPTY,
@@ -19,7 +34,7 @@ enum TILE_STATE
 	CROSS
 };
 
-enum PROGRAM_STATE
+enum PROGRAM_STATE	//Runtime state of the program, used by state machine
 {
 	PROG_NONE = -1,
 	PROG_MENU,
@@ -29,7 +44,7 @@ enum PROGRAM_STATE
 	PROG_EXIT
 };
 
-enum GAMEOVER_STATE
+enum GAMEOVER_STATE	//Different states of a game of tic-tac-toe
 {
 	GAME_NOT_OVER = -1,
 	NOUGHT_WIN,
@@ -37,7 +52,7 @@ enum GAMEOVER_STATE
 	DRAW
 };
 
-enum COMPUPTER_LEVEL
+enum COMPUPTER_LEVEL //Variety of AI opponent difficulties
 {
 	NO_LEVEL = -1,
 	COMP_NORMAL,

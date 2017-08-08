@@ -1,3 +1,18 @@
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2005 - 2017 Media Design School
+//
+// File Name : Draw.h
+// Description : Static class with functions to draw onto console
+//				 Also has the function of changing text colour in the console
+// Author : Sean Huang
+// Mail : sean.hua7281@mediadesig.school.nz
+//
+
 #pragma once
 
 #include "Game.h"
@@ -7,7 +22,7 @@
 #define BOARD_X_OFFSET 10
 #define BOARD_Y_OFFSET 5
 
-enum TEXT_COLOUR
+enum TEXT_COLOUR	//Different text colours on console
 {
 	NO_COLOUR = -1,
 	COLOUR_WHITE_ON_BLACK, 
