@@ -6,7 +6,7 @@
 
 Game::Game()
 {
-	srand((size_t)time(NULL));	//Randomize numbers	
+	srand((size_t)time(NULL));	//Randomize numbers	according to current time
 }
 
 void Game::StartGame()
@@ -441,12 +441,12 @@ void Game::PostGameUI()
 
 		switch ((char)userInput)
 		{
-		case ('1'):
+		case ('1'):	//User play again
 		{
 			validInput = true;
 			break;
 		}
-		case ('2'):
+		case ('2'):	//User quit to main menu
 		{
 			_nextState = PROG_MENU;
 			validInput = true;
@@ -551,10 +551,5 @@ int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 	{
 		return beta;
 	}
-
-	
-
-
-	return -1;
 }
 

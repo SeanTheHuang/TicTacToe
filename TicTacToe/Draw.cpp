@@ -200,7 +200,7 @@ void Draw::HighlightTile(int x, int y, TILE_STATE state)
 	int xPos = BOARD_X_OFFSET + (x * 6);
 	int yPos = BOARD_Y_OFFSET + (y * 4);
 
-	switch (state)
+	switch (state)	//Draw different symbol according to current tile placed
 	{
 	case (EMPTY):
 	{
