@@ -408,10 +408,7 @@ int Game::GetComputerMoveRandom()
 
 int Game::GetComputerMoveSmart()
 {
-	int output;
-	MiniMaxAlgorithm(-1000, 1000, 0, true, output);
-
-	return output;
+	return MiniMaxAlgorithm(-1000, 1000, 0, true);
 }
 
 void Game::ClearBoard()
@@ -461,14 +458,102 @@ void Game::PostGameUI()
 	}
 }
 
-int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax, int& chosenTile)
+int Game::MiniMaxAlgorithm(int alpha, int beta, int depth, bool goingForMax)
 {
 	//Check end game states
+	GAMEOVER_STATE state = CheckGameOver3x3();
+
+	switch (state)
+	{
+	case (CROSS_WIN):	//Computer win
+	{
+		return 10;
+		break;
+	}
+	case (NOUGHT_WIN):	//Player win
+	{
+		return -10;
+		break;
+	}
+	case (DRAW):		//No winner
+	{
+		return 0;
+		break;
+	}
+	default:
+		break;
+	}
+
+	//Variable for best move
+	int bestMove = -1;
 
 	//Loop through each tile and call recursively
-	//Update chosen tile whenever depth = 0
-	//Update alpha beta constantly
-	//Prune when alpha >= beta
+	for (size_t i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+	{
+		if (_gameBoard[i] == EMPTY)
+		{
+			if (goingForMax)	//Going for min score
+			{
+				_gameBoard[i] = CROSS;
+				int temp = MiniMaxAlgorithm(alpha, beta, depth+1, !goingForMax);
+
+				if (temp > alpha)
+				{
+					bestMove = i;
+					alpha = temp;
+
+					if (alpha >= beta)
+					{
+						_gameBoard[i] = EMPTY;
+
+						if (depth == 0)
+							return bestMove;
+
+						return alpha;
+					}
+				}
+				
+
+				_gameBoard[i] = EMPTY;
+				 
+			}
+			else				//Going for max score
+			{
+				_gameBoard[i] = NOUGHT;
+				int temp = MiniMaxAlgorithm(alpha, beta, depth + 1, !goingForMax);
+
+				if (temp < beta)
+				{
+					beta = temp;
+
+					if (alpha >= beta)
+					{
+						_gameBoard[i] = EMPTY;
+
+						return beta;
+					}
+				}
+
+				_gameBoard[i] = EMPTY;
+			}
+		}
+	}
+
+	//No pruning occured
+	if (goingForMax)
+	{
+		if (depth == 0)
+			return bestMove;
+
+		return alpha;
+	}
+	else
+	{
+		return beta;
+	}
+
+	
+
 
 	return -1;
 }
